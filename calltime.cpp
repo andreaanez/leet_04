@@ -30,73 +30,52 @@ public:
                 else {
                     return x;
                 }
-            } 
-
-     
+    } 
   
-        void insertItem(int key,int ID, int N, vector<vector<pair<int,int>>>& table) { 
-            int index = hashFunction(key,N); 
-            table[index].push_back(key,ID);  
-            cout << "Inserting:" << key << " at index: " << index << endl;
-                
+    void insertItem(int key,int ID, int N, vector<vector<pair<int,int>>>& table) { 
+        cout << "calling hash function"<<endl;
+        int index = hashFunction(key,N); 
+        table[index].push_back((pair<int, int>(key,ID)));  
+        cout << "Inserting:" << key << " at index: " << index << endl;   
 
-            } 
-            
-        void createtree(Node*root, vector<int>& manager, vector<int>& informTime,int k, int N){
+        } 
+        
+    void createtree(Node*root, vector<int>& manager, vector<int>& informTime,vector<vector<pair<int,int>>>& table, int N){
 
         if (root -> inform == 0){
             return;
         }
 
-        if (k ==0){
-            vector<vector<pair<int,int>>> table; 
-         for (int i =0; i<informTime.size();i++) {
-            int key = hashFunction(i,N);
-            insertItem (key,i,N,table);
-             }
-        }   
-            k++;
+        else {
             int key = root -> ID;
             int index = hashFunction(key,N); 
             vector<pair<int,int>>::iterator i;
-           for (i = table[index].begin(); i < table[index].end(); i++){
-               (root->child.push_back(newNode(i->second,informTime[i->second])));
-                createtree(root->child.back(),manager,informTime,k,N);
-    
+            for (i = table[index].begin(); i < table[index].end(); i++){
+                (root->child.push_back(newNode(i->second,informTime[i->second])));
+                    createtree(root->child.back(),manager,informTime,table,N);
                 }
-            return;
-         }
-            
-            
+            }
+        return;
+    }
         
         
-        //in the case that we reach the end of this branch  
-    
 
-    
-    //why DOESNT work
-   
-    
     int maxTime(struct Node *root) { 
-        //base case and in the case that we get a dud 
+
         int maxtime = 0;
         if (root->inform == 0) {
-           // cout<<"ROOT =0 "<<"ID: "<< root -> ID<<"inform time: " << root -> inform << endl;
             return maxtime; 
         }
     
         for (vector<Node*>::iterator it = root->child.begin(); it != root->child.end(); it++){
-            //wrong
-            //cout<<"FOR LOOP :"<<"ID:"<< root -> ID<<"inform time: " << root -> inform <<endl;
-            //cout << "just began for loop"<<endl;
             maxtime = max(maxtime, maxTime(*it));
-            //cout <<"just returned in the four loop,max Val: " << maxtime<<endl;
             }
-       // cout << "final maxtime value " << maxtime<<endl;  
+       
         maxtime += root -> inform;  
         cout << "final maxtime value " << maxtime<<endl;   
         return maxtime; 
-        } 
+
+    } 
 
     
     int numOfMinutes(int n, int headID, vector<int>& manager, vector<int>& informTime) {
@@ -105,7 +84,16 @@ public:
         }
    
         Node *root = newNode(headID,informTime[headID]);
-        createtree(root,manager,informTime,0,n);
+        cout <<"this far"<<endl;
+        vector<vector<pair<int,int>>> table; 
+        for (int i =0; i<informTime.size();i++) {
+            cout<<"this far 2"<<endl;
+            int key = hashFunction(i,n);
+            cout<<"this far 3"<<endl;
+            insertItem (key,i,n,table);
+             }
+
+        createtree(root,manager,informTime,table,n);
         return maxTime(root);
         }
     };
@@ -147,10 +135,19 @@ int main() {
     manager.push_back(6);
     manager.push_back(6);
 
-  
-    Solution K; 
-    Node *root = newNode(2,1);
     
-    K.numOfMinutes(15,0,manager,informTime);
+    
+    
+    vector<vector<pair<int,int>>> t;
+    cout<<"HERE:1"<<end;
+    t[0].push_back((pair<int, int>(0,2)));
+    cout <<"HERE"<<t[0].front().first<<endl;
+   
+    //table.push_back((pair<int,int>(2,1)));
+   // Node *root = newNode(2,1);
+    Solution K;
+    K.insertItem( 0, 2,  15, t); 
+    //K.numOfMinutes(15,0,manager,informTime);
+   
 
 }
